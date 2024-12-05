@@ -1,3 +1,4 @@
+import aoc_2024/utils
 import gleam/int
 import gleam/list
 import gleam/pair
@@ -35,8 +36,7 @@ fn parse_lists(input: String) {
   input
   |> string.replace("   ", ",")
   |> string.replace("\n", ",")
-  |> string.split(",")
-  |> list.map(assert_as_int)
+  |> utils.parse_list_as_int(",")
   |> separate_cols
 }
 
@@ -57,11 +57,6 @@ fn separate_columns_recurs(
       separate_columns_recurs(rest, l1, l2 |> list.prepend(x), True)
     _, _ -> #(l1, l2)
   }
-}
-
-fn assert_as_int(str_num: String) {
-  let assert Ok(num) = str_num |> int.parse
-  num
 }
 
 fn list_difference(cols: #(List(Int), List(Int))) -> Int {
