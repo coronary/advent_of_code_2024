@@ -18,8 +18,12 @@ pub fn pt_2(input: String) {
     |> list.partition(is_valid_report)
   invalid
   |> get_invalid_variants
-  |> run_reports
+  |> list.count(where: fn(x: List(List(Int))) {
+    x
+    |> list.any(is_valid_report)
+  })
   |> int.add(valid |> list.length)
+  |> io.debug
 }
 
 fn run_reports(on list: List(List(Int))) -> Int {
@@ -77,11 +81,10 @@ fn is_valid_step(levels: #(Int, Int), is_ascending: Bool) -> Bool {
   }
 }
 
-fn get_invalid_variants(list: List(List(Int))) -> List(List(Int)) {
+fn get_invalid_variants(list: List(List(Int))) -> List(List(List(Int))) {
   list
   |> list.map(fn(li: List(Int)) {
     li
     |> list.index_map(fn(_: Int, index: Int) { list_without_value(li, index) })
   })
-  |> list.flatten
 }
