@@ -7,7 +7,7 @@ import gleam/pair
 pub fn pt_1(input: String) {
   input
   |> gather_reports
-  |> run_reports
+  |> list.count(where: is_valid_report)
   |> io.debug
 }
 
@@ -24,17 +24,6 @@ pub fn pt_2(input: String) {
   })
   |> int.add(valid |> list.length)
   |> io.debug
-}
-
-fn run_reports(on list: List(List(Int))) -> Int {
-  list
-  |> list.fold(0, fn(acc: Int, report: List(Int)) {
-    let is_valid = is_valid_report(report)
-    case is_valid {
-      True -> acc + 1
-      False -> acc
-    }
-  })
 }
 
 fn gather_reports(input: String) -> List(List(Int)) {
