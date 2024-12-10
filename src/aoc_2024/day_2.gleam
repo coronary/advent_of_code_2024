@@ -12,17 +12,20 @@ pub fn pt_1(input: String) {
 }
 
 pub fn pt_2(input: String) {
-  input
-  |> gather_reports
-  |> expand_lists
+  let #(valid, invalid) =
+    input
+    |> gather_reports
+    |> list.partition(is_valid_report)
+  invalid
+  |> get_invalid_variants
   |> run_reports
-  |> io.debug
+  |> int.add(valid |> list.length)
 }
 
 fn run_reports(on list: List(List(Int))) -> Int {
   list
   |> list.fold(0, fn(acc: Int, report: List(Int)) {
-    let is_valid = is_valid_report(report |> list.window_by_2)
+    let is_valid = is_valid_report(report)
     case is_valid {
       True -> acc + 1
       False -> acc
@@ -50,7 +53,8 @@ fn list_without_value(values: List(a), index: Int) -> List(a) {
   list.append(before, list.drop(after, 1))
 }
 
-fn is_valid_report(report: List(#(Int, Int)), dampener: Bool) -> Bool {
+fn is_valid_report(report: List(Int)) -> Bool {
+  let report = report |> list.window_by_2
   let is_ascending =
     report |> list.any(fn(elem) { pair.first(elem) < pair.second(elem) })
   report
@@ -73,18 +77,11 @@ fn is_valid_step(levels: #(Int, Int), is_ascending: Bool) -> Bool {
   }
 }
 
-fn expand_lists(list: List(List(Int))) -> List(List(Int)) {
-  let prod =
-    list
-    |> list.map(fn(li: List(Int)) {
-      let x =
-        li
-        |> list.index_map(fn(_: Int, index: Int) {
-          list_without_value(li, index)
-        })
-      io.debug(x)
-      x
-    })
-    |> list.flatten
-  prod
+fn get_invalid_variants(list: List(List(Int))) -> List(List(Int)) {
+  list
+  |> list.map(fn(li: List(Int)) {
+    li
+    |> list.index_map(fn(_: Int, index: Int) { list_without_value(li, index) })
+  })
+  |> list.flatten
 }
